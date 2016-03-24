@@ -18,24 +18,25 @@ namespace MonoCrab3._5
         private int speed = 40;
         private float turnSpeed = 3;
         private Vector2 closestTarget;
-        private int energy = 100;
-        public int Energy
+
+        public int Speed
         {
             get
             {
-                return energy;
+                return speed;
             }
 
             set
             {
-                energy = value;
+                speed = value;
             }
         }
+
         public CCrab(GameObject gameObject) : base(gameObject)
         {
             this.animator = (CAnimator)gameObject.GetComponent("CAnimator");
             GameWorld.gameWorld.CrabList.Add(this.gameObject);
-            gameObject.Transform.speed = speed;
+            gameObject.Transform.speed = Speed;
             gameObject.Transform.turnSpeed = turnSpeed;
         }
 

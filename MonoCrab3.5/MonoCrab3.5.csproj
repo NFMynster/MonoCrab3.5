@@ -73,9 +73,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Animation.cs" />
-    <Compile Include="Bait.cs" />
     <Compile Include="BaitBuilder.cs" />
-    <Compile Include="BaitPlacer.cs" />
     <Compile Include="BaitPool.cs" />
     <Compile Include="Camera2D.cs" />
     <Compile Include="CAnimator.cs" />
@@ -83,11 +81,11 @@
     <Compile Include="CBaitMachine.cs" />
     <Compile Include="CCollider.cs" />
     <Compile Include="CCrab.cs" />
-    <Compile Include="CCursor.cs" />
     <Compile Include="CIntroMenu.cs" />
     <Compile Include="CLoadingUI.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="CPlayer.cs" />
+    <Compile Include="PlayerCrabBuilder.cs" />
     <Compile Include="CrabBuilder.cs" />
     <Compile Include="CSpriteRenderer.cs" />
     <Compile Include="CTransform.cs" />
@@ -122,6 +120,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\crab.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Loading.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\NegBait1.png">

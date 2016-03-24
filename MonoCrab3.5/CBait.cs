@@ -70,7 +70,30 @@ namespace MonoCrab3._5
             if (other.gameObject.GetComponent("CCrab") != null)
             {
                 CCrab tCrab = (CCrab)other.gameObject.GetComponent("CCrab");
-                tCrab.Energy += Energy;
+
+                switch (baitType)
+                {
+                    case BaitTypes.PosBait1:
+                        tCrab.Speed += 5;
+                        break;
+                    case BaitTypes.NegBait1:
+                        tCrab.Speed -= 5;
+                        break;
+                    case BaitTypes.PosBait3:
+                        tCrab.Speed += 10;
+                        break;
+                    case BaitTypes.NegBait3:
+                        tCrab.Speed -= 10;
+                        break;
+                    case BaitTypes.PosBait5:
+                        tCrab.Speed += 15;
+                        break;
+                    case BaitTypes.NegBait5:
+                        tCrab.Speed -= 15;
+                        break;
+                    default:
+                        break;
+                }
             }
             if (other.gameObject.GetComponent("CCrab") != null)
             {

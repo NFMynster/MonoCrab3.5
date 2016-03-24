@@ -22,12 +22,12 @@ namespace MonoCrab3._5
 
             if (NewKeyState.IsKeyDown(Keys.Enter) && !GameWorld.gameWorld.startGame)
             {
-                GameWorld.gameWorld.gameCamera.shouldLerp = true;
-                
+                //GameWorld.gameWorld.gameCamera.shouldLerp = true;
+                GameWorld.gameWorld.gameCamera.currentCamState = CameraZoomState.Game;
                 GameWorld.gameWorld.startGame = true;
                 
             }
-            if (GameWorld.gameWorld.startGame)
+            else if (GameWorld.gameWorld.startGame)
             {
                 spriteRenderer.opacity = MathHelper.Lerp(spriteRenderer.opacity, 0, 5f*GameWorld.gameWorld.deltaTime);
                 //just remove the object if it's faded out

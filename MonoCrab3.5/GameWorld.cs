@@ -92,10 +92,10 @@ namespace MonoCrab3._5
             introMenu.AddComponent(new CIntroMenu(introMenu));
             gameObjects.Add(introMenu);
 
-            GameObject cursor = new GameObject(Vector2.Zero);
-            cursor.AddComponent(new CSpriteRenderer(introMenu, "NegBait1", Color.White, 1f));
-            cursor.AddComponent(new CCursor(cursor));
-            Add(cursor);
+            GameObject loadingUI = new GameObject(new Vector2(4000, 2250));
+            loadingUI.AddComponent(new CSpriteRenderer(loadingUI, "loading", Color.White, 1f));
+            loadingUI.AddComponent(new CLoadingUI(loadingUI));
+            gameObjects.Add(loadingUI);
 
             //crabDirector.Construct(new Vector2(5500, 2300));
             //crabDirector.Construct(new Vector2(5650, 2000));
@@ -147,9 +147,12 @@ namespace MonoCrab3._5
             }
             background = Content.Load<Texture2D>("Background");
             IBuilder crabBuilder = new CrabBuilder();
-            Director crabDirector = new Director(crabBuilder);
-            Add(crabDirector.Construct(new Vector2(5500,2100)));
-            //Add(crabDirector.Construct(new Vector2(5500, 2400)));
+            Director director = new Director(crabBuilder);
+            Add(director.Construct(new Vector2(5500,2100)));
+
+            IBuilder playerCrabBuilder = new PlayerCrabBuilder();
+            director = new Director(playerCrabBuilder);
+            Add(director.Construct(new Vector2(5500, 2400)));
 
         }
 

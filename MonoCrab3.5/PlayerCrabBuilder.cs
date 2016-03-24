@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace MonoCrab3._5
 {
-    class CrabBuilder : IBuilder
+    class PlayerCrabBuilder : IBuilder
     {
         private GameObject gameObject;
 
@@ -18,12 +18,11 @@ namespace MonoCrab3._5
         public void BuildGameObject(Vector2 position)
         {
             gameObject = new GameObject(position);
-            gameObject.AddComponent(new CSpriteRenderer(gameObject, "crab", Color.White, 0.4f));
+            gameObject.AddComponent(new CSpriteRenderer(gameObject, "crab", Color.LightGreen, 0.4f));
             gameObject.AddComponent(new CAnimator(gameObject));
             gameObject.AddComponent(new CCrab(gameObject));
-            gameObject.AddComponent(new CCollider(gameObject, true, 6));
-            gameObject.AddComponent(new CBaitMachine(gameObject, 3));
-            
+            gameObject.AddComponent(new CCollider(gameObject, true, 6));            
+            gameObject.AddComponent(new CPlayer(gameObject));
             
 
 

@@ -5,6 +5,15 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MonoCrab3._5
 {
+    /// <summary>
+    /// Enum over all Camera states for managing the different locations for the camera
+    /// </summary>
+    public enum CameraZoomState
+    {
+        Loading,
+        MainMenu,
+        Game
+    }
     public class Camera2D
     {
         public Matrix viewMatrix;
@@ -14,20 +23,25 @@ namespace MonoCrab3._5
         public Vector2 origin;
         private float cameraSpeed = 5;
         private int targetIndex = 0;
-        private KeyboardState keyState;
         private MouseState mouseState; //Mouse state
         private int scroll;
-        KeyboardState oldState;
+        KeyboardState keyStateOld;
         KeyboardState oldState1;
         private float crabZoom = 0.7f;
-        public bool shouldLerp = false;
-        
+       
+        public CameraZoomState currentCamState;
+
         public float zoom; // Camera Zoom
         
         public Camera2D(Rectangle clientRect)
         {
+            currentCamState = CameraZoomState.Loading;
             origin = Vector2.Zero;
-            zoom = 0.165f;
+            position = new Vector2(4000, 2250);
+            target = new Vector2(4000, 2250);
+            //Camera zoom starts at 1 because we have a fixed loading screen
+            zoom = 1f;
+
             halfViewSize = new Vector2(clientRect.Width * 0.5f, clientRect.Height * 0.5f);
             UpdateViewMatrix();
             
@@ -49,20 +63,15 @@ namespace MonoCrab3._5
         
         public void Update()
         {
-           
 
-            if (shouldLerp && zoom <= crabZoom)
-            {
-                GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 0.7f, 0.2f * GameWorld.gameWorld.deltaTime);
-            }
-           
+         
             if (!GameWorld.gameWorld.startGame)
             {
                 foreach (GameObject go in GameWorld.gameWorld.GameObjects)
                 {
                     if (go.GetComponent("CIntroMenu") != null)
                     {
-                        target = go.Transform.position;
+                       target = go.Transform.position;
                     }
                 }
             }
@@ -73,12 +82,9 @@ namespace MonoCrab3._5
                     target = GameWorld.gameWorld.CrabList[targetIndex].Transform.position;
                 }
             }
-            keyState = Keyboard.GetState();
-
-
             KeyboardState NewKeyState = Keyboard.GetState();
 
-            if (NewKeyState.IsKeyDown(Keys.Q) && oldState.IsKeyUp(Keys.Q))
+            if (NewKeyState.IsKeyDown(Keys.Q) && keyStateOld.IsKeyUp(Keys.Q))
             {
                 if (targetIndex < GameWorld.gameWorld.CrabList.Count && targetIndex > 0)
                 {
@@ -92,8 +98,7 @@ namespace MonoCrab3._5
 
                 }
             }
-            oldState = NewKeyState;
-
+            keyStateOld = NewKeyState;
 
             KeyboardState NewKey1State = Keyboard.GetState();
 
@@ -112,8 +117,7 @@ namespace MonoCrab3._5
                 
             }
             oldState1 = NewKey1State;
-            //Vector2 targetWorldPosition = GameWorld.gameWorld.gameCamera.GetWorldPosition(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
-
+            
             Position = Vector2.Lerp(Position, target, cameraSpeed * GameWorld.gameWorld.deltaTime);
             //Check zoom
             mouseState = Mouse.GetState();
@@ -127,10 +131,40 @@ namespace MonoCrab3._5
                 zoom -= 0.01f;
                 scroll = mouseState.ScrollWheelValue;
             }
+            //Camera state
+            //Check and see if the zoom is what should be
+            switch (currentCamState)
+            {
+                case CameraZoomState.Loading:
+                   if (Math.Round((decimal)GameWorld.gameWorld.gameCamera.zoom, 1) != 1.0m)
+                   {
+                        GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 1f, 10f * GameWorld.gameWorld.deltaTime);
+                   }                    
+                    break;
+                case CameraZoomState.MainMenu:
+                    if (Math.Round((decimal)GameWorld.gameWorld.gameCamera.zoom, 2) != 0.16m)
+                    {
+                        GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 0.165f, 10f * GameWorld.gameWorld.deltaTime);
+
+                    }
+                    break;
+                case CameraZoomState.Game:
+                    if (Math.Round((decimal)GameWorld.gameWorld.gameCamera.zoom, 2) != 0.7m)
+                    {
+                        GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 0.7f, 1f * GameWorld.gameWorld.deltaTime);
+
+                    }
+                    break;
+                default:
+                    break;
+            }
 
 
-
-
+        }
+        public void SetCameraState()
+        {
+           
+            
         }
         private void UpdateViewMatrix()
         {
@@ -141,17 +175,9 @@ namespace MonoCrab3._5
                                          Matrix.CreateTranslation(new Vector3(halfViewSize.X , halfViewSize.Y , 0));
             
 
-            //viewMatrix = Matrix.CreateTranslation(halfViewSize.X - position.X, halfViewSize.Y - position.Y, 0.0f);
+            
         }
-        public Vector2 GetScreenPosition(Vector2 worldPosition)
-        {
-            return worldPosition - position;
-        }
-
-        public Vector2 GetWorldPosition(Vector2 screenPosition)
-        {
-            return screenPosition + position;
-        }
+      
 
 
     }

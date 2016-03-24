@@ -16,12 +16,10 @@ namespace MonoCrab3._5
         private float minRange = 100;
         private float maxRange = 500;
         private Random rnd;
-                private float timerLimit = 0;
+        private float timerLimit = 2;
         private float timePassed = 0;
-        MouseState mouseStateCurrent;
-        MouseState mouseStatePrevious;
-
-
+        private MouseState mStateOld;
+        
 
         public CPlayer(GameObject gameObject) : base(gameObject)
         {
@@ -38,14 +36,12 @@ namespace MonoCrab3._5
             if (timePassed > timerLimit && GameWorld.gameWorld.startGame)
             {
 
-                mouseStateCurrent = Mouse.GetState();
+                MouseState mState = Mouse.GetState();              
                 
-                // Left MouseClick
-                var mState = Mouse.GetState();
                 Vector2 mPosition = new Vector2((mState.X + (GameWorld.gameWorld.gameCamera.target.X - 640)) , (mState.Y + (GameWorld.gameWorld.gameCamera.origin.Y -320)));
-               // Vector2 targetWorldPosition = GameWorld.gameWorld.gameCamera.GetWorldPosition(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
+              
                 Vector2 worldPosition = Vector2.Transform(new Vector2(mState.X, mState.Y), Matrix.Invert(GameWorld.gameWorld.gameCamera.viewMatrix));
-                if (GameWorld.gameWorld.BaitList.Count <= 30 && (mouseStateCurrent.LeftButton == ButtonState.Pressed))
+                if (mState.LeftButton == ButtonState.Pressed && mStateOld.LeftButton == ButtonState.Released)
                 {
                     
                     BaitTypes randomBait = (BaitTypes)rnd.Next(0, Enum.GetNames(typeof(BaitTypes)).Length - 1);
@@ -55,7 +51,7 @@ namespace MonoCrab3._5
                     timePassed = 0;
 
                 }
-                mouseStatePrevious = mouseStateCurrent;
+                mStateOld = mState;
 
                 
             }
