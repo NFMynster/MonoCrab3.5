@@ -65,17 +65,17 @@ namespace MonoCrab3._5
         {
 
          
-            if (!GameWorld.gameWorld.startGame)
-            {
-                foreach (GameObject go in GameWorld.gameWorld.GameObjects)
-                {
-                    if (go.GetComponent("CIntroMenu") != null)
-                    {
-                       target = go.Transform.position;
-                    }
-                }
-            }
-            else if (GameWorld.gameWorld.startGame)
+            //if (!GameWorld.gameWorld.startGame)
+            //{
+            //    foreach (GameObject go in GameWorld.gameWorld.GameObjects)
+            //    {
+            //        if (go.GetComponent("CIntroMenu") != null)
+            //        {
+            //           target = go.Transform.position;
+            //        }
+            //    }
+            //}
+            if (GameWorld.gameWorld.startGame)
             {
                 for (int i = 0; i < GameWorld.gameWorld.CrabList.Count; i++)
                 {

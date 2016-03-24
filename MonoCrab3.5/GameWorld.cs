@@ -5,7 +5,7 @@ using System.Net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using System.Diagnostics;
 
 namespace MonoCrab3._5
 {
@@ -192,7 +192,37 @@ namespace MonoCrab3._5
             //Update our camera
             gameCamera.Update();
             ObjectPoolControl();
+            CheckWin();
             base.Update(gameTime);
+        }
+
+        private void CheckWin()
+        {
+            float radius = 1840;
+
+            foreach (GameObject t in GameWorld.gameWorld.crabList.ToList())
+            {
+                if (t.GetComponent("CCrab") != null)
+                {
+                    float dist = Vector2.Distance(t.Transform.position, new Vector2(5450,2100));
+                    if (dist < radius)
+                    {
+                        Debug.Print("WITHIN RADIUS");
+                    }
+                    else
+                    {
+                        Debug.Print("OUT OF RADIUS");
+                        if (t.GetComponent("CCrab") != null && t.GetComponent("CPlayer") != null)
+                        {
+                            startGame = false;
+                           // gameCamera.target = t.Transform.position;
+                           //TODO add game win logic here, will do later
+                        }
+
+                    }
+                }
+
+            }
         }
 
         private void ObjectPoolControl()
@@ -204,6 +234,7 @@ namespace MonoCrab3._5
             gameObjects.AddRange(objectToAdd);
             objectToAdd.Clear();
         }
+        
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
