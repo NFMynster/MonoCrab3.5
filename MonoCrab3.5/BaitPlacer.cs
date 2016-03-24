@@ -8,10 +8,9 @@ namespace MonoCrab3._5
 {
     class BaitPlacer
     {
-        private int spawnAmount;
+        
         private Vector2 currentTarget;
-        private bool nextTarget = false;
-        private Random rnd;
+                private Random rnd;
         private float timerLimit = 3;
         private float timePassed = 0;
         private float minRange = 100;

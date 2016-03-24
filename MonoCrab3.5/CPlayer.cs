@@ -16,8 +16,7 @@ namespace MonoCrab3._5
         private float minRange = 100;
         private float maxRange = 500;
         private Random rnd;
-        private bool pressed;
-        private float timerLimit = 0;
+                private float timerLimit = 0;
         private float timePassed = 0;
         MouseState mouseStateCurrent;
         MouseState mouseStatePrevious;
@@ -48,7 +47,7 @@ namespace MonoCrab3._5
                 Vector2 worldPosition = Vector2.Transform(new Vector2(mState.X, mState.Y), Matrix.Invert(GameWorld.gameWorld.gameCamera.viewMatrix));
                 if (GameWorld.gameWorld.BaitList.Count <= 30 && (mouseStateCurrent.LeftButton == ButtonState.Pressed))
                 {
-                    pressed = true;
+                    
                     BaitTypes randomBait = (BaitTypes)rnd.Next(0, Enum.GetNames(typeof(BaitTypes)).Length - 1);
                     GameWorld.gameWorld.Add(BaitPool.baitPoolInstance.Create(worldPosition, randomBait));
 
@@ -58,7 +57,7 @@ namespace MonoCrab3._5
                 }
                 mouseStatePrevious = mouseStateCurrent;
 
-                pressed = false;
+                
             }
 
             timePassed += (float)GameWorld.gameWorld.deltaTime;

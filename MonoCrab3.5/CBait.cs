@@ -11,7 +11,7 @@ namespace MonoCrab3._5
     class CBait : Component, ILoadable, IOnCollisionEnter, IAnimateable
     {
         private CAnimator animator;
-        private CSpriteRenderer spriteRenderer;
+        
         private int energy;
         private BaitTypes baitType;
         public int Energy
