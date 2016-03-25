@@ -23,8 +23,7 @@ namespace MonoCrab3._5
             gameObject.AddComponent(new CCrab(gameObject));
             gameObject.AddComponent(new CCollider(gameObject, true, 6));
             gameObject.AddComponent(new CBaitMachine(gameObject, 3));
-            
-            
+                    
 
 
         }

@@ -38,7 +38,7 @@ namespace MonoCrab3._5
 
                 MouseState mState = Mouse.GetState();              
                 
-                Vector2 mPosition = new Vector2((mState.X + (GameWorld.gameWorld.gameCamera.target.X - 640)) , (mState.Y + (GameWorld.gameWorld.gameCamera.origin.Y -320)));
+                
               
                 Vector2 worldPosition = Vector2.Transform(new Vector2(mState.X, mState.Y), Matrix.Invert(GameWorld.gameWorld.gameCamera.viewMatrix));
                 if (mState.LeftButton == ButtonState.Pressed && mStateOld.LeftButton == ButtonState.Released)

@@ -10,6 +10,16 @@ using System.Diagnostics;
 namespace MonoCrab3._5
 {
     /// <summary>
+    /// Enum over all Camera states for managing the different locations for the camera
+    /// </summary>
+    public enum GameState
+    {
+        Loading,
+        MainMenu,
+        Game,
+        UI
+    }
+    /// <summary>
     /// This is the main type for your game.
     /// </summary>
     public class GameWorld : Game
@@ -18,6 +28,8 @@ namespace MonoCrab3._5
         SpriteBatch spriteBatch;
         public float deltaTime;
         public Camera2D gameCamera;
+        public GameState currentGameState;
+        private KeyboardState enterKeyStateOld;
         private static GameWorld GM;    
         public Rectangle displayRectangle;
         private Texture2D background;
@@ -78,7 +90,7 @@ namespace MonoCrab3._5
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
-            
+            currentGameState = GameState.MainMenu;
             
 
         }
@@ -87,19 +99,13 @@ namespace MonoCrab3._5
         /// </summary>
         private void AddGameObjects()
         {
-            GameObject introMenu = new GameObject(new Vector2(4000,2250));
-            introMenu.AddComponent(new CSpriteRenderer(introMenu, "welcomescreen", Color.White, 1f));
-            introMenu.AddComponent(new CIntroMenu(introMenu));
-            gameObjects.Add(introMenu);
+            IBuilder crabBuilder = new CrabBuilder();
+            Director director = new Director(crabBuilder);
+            Add(director.Construct(new Vector2(5500, 2100)));
 
-            GameObject loadingUI = new GameObject(new Vector2(4000, 2250));
-            loadingUI.AddComponent(new CSpriteRenderer(loadingUI, "loading", Color.White, 1f));
-            loadingUI.AddComponent(new CLoadingUI(loadingUI));
-            gameObjects.Add(loadingUI);
-
-            //crabDirector.Construct(new Vector2(5500, 2300));
-            //crabDirector.Construct(new Vector2(5650, 2000));
-
+            IBuilder playerCrabBuilder = new PlayerCrabBuilder();
+            director = new Director(playerCrabBuilder);
+            Add(director.Construct(new Vector2(5500, 2400)));
 
 
         }
@@ -119,7 +125,7 @@ namespace MonoCrab3._5
            
             //Initialize the camera
             gameCamera = new Camera2D(graphics.GraphicsDevice.Viewport.Bounds);
-            
+
             base.Initialize();
         }
 
@@ -145,15 +151,13 @@ namespace MonoCrab3._5
             {
                 go.LoadContent(this.Content);
             }
-            background = Content.Load<Texture2D>("Background");
-            IBuilder crabBuilder = new CrabBuilder();
-            Director director = new Director(crabBuilder);
-            Add(director.Construct(new Vector2(5500,2100)));
-
-            IBuilder playerCrabBuilder = new PlayerCrabBuilder();
-            director = new Director(playerCrabBuilder);
-            Add(director.Construct(new Vector2(5500, 2400)));
-
+            background = Content.Load<Texture2D>("BackgroundMainMenu");
+            
+            //Initialise the update function in the UIManager
+            UIManager.manager.LoadContent(this.Content);
+            //UIManager.manager.SetUIScreen(0);
+           
+            
         }
 
         /// <summary>
@@ -173,6 +177,9 @@ namespace MonoCrab3._5
         protected override void Update(GameTime gameTime)
         {
             deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+           
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -181,14 +188,37 @@ namespace MonoCrab3._5
             {
                 go.Update();
             }
-            KeyboardState keystate = Keyboard.GetState();
-            if (keystate.IsKeyDown(Keys.N))
-            {
-                Random rnd = new Random();
-                BaitTypes randomBait = (BaitTypes)rnd.Next(0, Enum.GetNames(typeof(BaitTypes)).Length);
-                Add(BaitPool.baitPoolInstance.Create(new Vector2(5500, 2100), randomBait));
+            KeyboardState enterKeyState = Keyboard.GetState();
 
+            switch (currentGameState)
+            {                
+                case GameState.MainMenu:
+                    if (enterKeyState.IsKeyDown(Keys.Enter) && enterKeyStateOld.IsKeyUp(Keys.Enter))
+                    {
+                        //RestartGame();
+                        startGame = true;
+                        currentGameState = GameState.Game;
+                    }
+                    break;
+                case GameState.Game:
+                    if (enterKeyState.IsKeyDown(Keys.Enter) && enterKeyStateOld.IsKeyUp(Keys.Enter))
+                    {
+                        currentGameState = GameState.MainMenu;
+                    }
+                    break;
+                case GameState.UI:
+                    if (enterKeyState.IsKeyDown(Keys.Enter) && enterKeyStateOld.IsKeyUp(Keys.Enter))
+                    {
+                        currentGameState = GameState.MainMenu;
+                        RestartGame();
+
+                    }
+                    break;
+                default:
+                    break;
             }
+            enterKeyStateOld = enterKeyState;
+
             //Update our camera
             gameCamera.Update();
             ObjectPoolControl();
@@ -212,11 +242,17 @@ namespace MonoCrab3._5
                     else
                     {
                         Debug.Print("OUT OF RADIUS");
-                        if (t.GetComponent("CCrab") != null && t.GetComponent("CPlayer") != null)
+                        if (t.GetComponent("CCrab") != null && t.GetComponent("CPlayer") != null && startGame)
                         {
                             startGame = false;
-                           // gameCamera.target = t.Transform.position;
-                           //TODO add game win logic here, will do later
+                            currentGameState = GameState.UI;
+                            UIManager.manager.SetUIScreen(1);
+                        }
+                        else if ((t.GetComponent("CCrab") != null) && startGame)
+                        {
+                            startGame = false;
+                            currentGameState = GameState.UI;
+                            UIManager.manager.SetUIScreen(2);
                         }
 
                     }
@@ -254,7 +290,7 @@ namespace MonoCrab3._5
 
             spriteBatch.Draw(background, Vector2.Zero, null, null, Vector2.Zero, 0, null, Color.White,
                 SpriteEffects.None, 0f);
-
+            UIManager.manager.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -268,6 +304,17 @@ namespace MonoCrab3._5
             {
                 go.LoadContent(Content);
             }
+        }
+        /// <summary>
+        /// Clear and restarts the game
+        /// </summary>
+        public void RestartGame()
+        {
+            GameObjects.Clear();
+            baitlist.Clear();
+            crabList.Clear();
+            AddGameObjects();
+            
         }
     }
 }

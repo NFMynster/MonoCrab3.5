@@ -15,7 +15,7 @@ namespace MonoCrab3._5
         private CAnimator animator;
         
         private List<Vector2> targets = new List<Vector2>();
-        private int speed = 40;
+        private int speed = 80;
         private float turnSpeed = 3;
         private Vector2 closestTarget;
 
