@@ -34,6 +34,10 @@ namespace MonoCrab3._5
         public Rectangle displayRectangle;
         private Texture2D background;
         public bool startGame = false;
+        private Random rnd;
+        //Amount of enemies to spawn
+        public int enemies = 1;
+
         public static GameWorld gameWorld
         {
             get
@@ -91,6 +95,7 @@ namespace MonoCrab3._5
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
             currentGameState = GameState.MainMenu;
+            rnd = new Random(DateTime.Now.Millisecond);
             
 
         }
@@ -99,15 +104,22 @@ namespace MonoCrab3._5
         /// </summary>
         private void AddGameObjects()
         {
-            IBuilder crabBuilder = new CrabBuilder();
-            Director director = new Director(crabBuilder);
-            Add(director.Construct(new Vector2(5500, 2100)));
+            //Max the amount of possible enemies
+            if (enemies >= 5)
+            {
+                enemies = 1;
+            }
 
             IBuilder playerCrabBuilder = new PlayerCrabBuilder();
-            director = new Director(playerCrabBuilder);
+            Director director = new Director(playerCrabBuilder);
             Add(director.Construct(new Vector2(5500, 2400)));
-
-
+            for (int i = 0; i < enemies; i++)
+            {
+                IBuilder crabBuilder = new CrabBuilder();
+                director = new Director(crabBuilder);
+                Add(director.Construct(new Vector2(rnd.Next(5250,5600), rnd.Next(1900,2300))));
+            }
+           
         }
 
         /// <summary>
@@ -181,7 +193,7 @@ namespace MonoCrab3._5
            
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+                 Exit();
 
             // TODO: Add your update logic here
             foreach (GameObject go in GameObjects.ToList())
@@ -210,6 +222,7 @@ namespace MonoCrab3._5
                     if (enterKeyState.IsKeyDown(Keys.Enter) && enterKeyStateOld.IsKeyUp(Keys.Enter))
                     {
                         currentGameState = GameState.MainMenu;
+                        
                         RestartGame();
 
                     }
@@ -225,7 +238,7 @@ namespace MonoCrab3._5
             CheckWin();
             base.Update(gameTime);
         }
-
+        
         private void CheckWin()
         {
             float radius = 1840;
@@ -245,6 +258,7 @@ namespace MonoCrab3._5
                         if (t.GetComponent("CCrab") != null && t.GetComponent("CPlayer") != null && startGame)
                         {
                             startGame = false;
+                            enemies++;
                             currentGameState = GameState.UI;
                             UIManager.manager.SetUIScreen(1);
                         }

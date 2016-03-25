@@ -13,7 +13,7 @@ namespace MonoCrab3._5
         private Vector2 halfViewSize;
         public Vector2 target;
 
-        private float cameraSpeed = .5f;
+        private float cameraSpeed = 5f;
         private int targetIndex = 0;
         private MouseState mouseState; //Mouse state
         private int scroll;
@@ -29,7 +29,7 @@ namespace MonoCrab3._5
 
         public Camera2D(Rectangle clientRect)
         {
-
+        
             position = new Vector2(3000, 1700);
             // target = new Vector2(4000, 2250);
             //Start zoomed out

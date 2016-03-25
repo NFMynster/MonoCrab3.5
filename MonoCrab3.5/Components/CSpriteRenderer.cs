@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -84,6 +85,10 @@ namespace MonoCrab3._5
             {
                  spriteBatch.Draw(Sprite, gameObject.Transform.position + Offset, Rectangle, drawColor * opacity, gameObject.Transform.rotation,new Vector2(Sprite.Width / 2,Sprite.Height / 2), 1, SpriteEffects.None, layerDepth);
 
+            }
+            if (!gameObject.IsLoaded)
+            {
+                Debug.Print("DISPOSED");
             }
         }
     }

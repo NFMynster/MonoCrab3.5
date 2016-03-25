@@ -84,7 +84,7 @@
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\CPlayer.cs" />
     <Compile Include="PlayerCrabBuilder.cs" />
-    <Compile Include="Components\CrabBuilder.cs" />
+    <Compile Include="CrabBuilder.cs" />
     <Compile Include="Components\CSpriteRenderer.cs" />
     <Compile Include="Components\CTransform.cs" />
     <Compile Include="Director.cs" />
