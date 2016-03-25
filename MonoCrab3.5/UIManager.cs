@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 namespace MonoCrab3._5
 {
+    /// <summary>
+    /// A singleton pattern implementing an easy way of "switching" between UI panels. These panels are pictures and they will get rendered at the cameras center. 
+    /// </summary>
     class UIManager
     {
         string[] UIContent = new string[] { "Loading", "MonoCrabWin", "MonoCrabLose" };
@@ -49,7 +52,7 @@ namespace MonoCrab3._5
                 spriteBatch.Draw(currentUIScreen, centerScreen, null, Color.White * opacity, 0, Vector2.Zero, 1, SpriteEffects.None, 1f);
 
                 KeyboardState NewKey1State = Keyboard.GetState();
-                //Hardcodes the controls for all panels. 
+                //Hardcodes the controls
                 //TODO more control
                 if (NewKey1State.IsKeyDown(Keys.Enter) && oldState1.IsKeyUp(Keys.Enter) && !GameWorld.gameWorld.startGame)
                 {
@@ -74,8 +77,10 @@ namespace MonoCrab3._5
                 }
             }
         }
+      
         public void LoadContent(ContentManager content)
         {
+            //Load each of our custom UI panels
             for (int i = 0; i < UIContent.Length; i++)
             {
                 UIScreens[i] = content.Load<Texture2D>(UIContent[i]);
@@ -84,7 +89,6 @@ namespace MonoCrab3._5
         public void SetUIScreen(int index)
         {
             currentUIScreen = UIScreens[index];
-
             opacity = 1f;
             fadeOut = false;
             shouldDraw = true;

@@ -12,14 +12,14 @@ namespace MonoCrab3._5
         private Vector2 position;
         private Vector2 halfViewSize;
         public Vector2 target;
-        
-        private float cameraSpeed = 5;
+
+        private float cameraSpeed = .5f;
         private int targetIndex = 0;
         private MouseState mouseState; //Mouse state
         private int scroll;
         KeyboardState keyStateOld;
         KeyboardState oldState1;
-        
+
 
 
 
@@ -29,7 +29,7 @@ namespace MonoCrab3._5
 
         public Camera2D(Rectangle clientRect)
         {
-            
+
             position = new Vector2(3000, 1700);
             // target = new Vector2(4000, 2250);
             //Start zoomed out
@@ -57,26 +57,6 @@ namespace MonoCrab3._5
 
         public void Update()
         {
-
-
-            //if (!GameWorld.gameWorld.startGame)
-            //{
-            //    foreach (GameObject go in GameWorld.gameWorld.GameObjects)
-            //    {
-            //        if (go.GetComponent("CIntroMenu") != null)
-            //        {
-            //            target = go.Transform.position;
-            //        }
-            //    }
-            //}
-            //if (GameWorld.gameWorld.startGame)
-            //{
-            //    for (int i = 0; i < GameWorld.gameWorld.CrabList.Count; i++)
-            //    {
-            //        target = GameWorld.gameWorld.CrabList[targetIndex].Transform.position;
-            //    }
-            //}
-            
 
             KeyboardState NewKeyState = Keyboard.GetState();
 
@@ -127,57 +107,53 @@ namespace MonoCrab3._5
                 scroll = mouseState.ScrollWheelValue;
             }
             //Camera state
-            //Check and see if the zoom is what should be. The zoom should always be 1 if there is a UI element present
-           
-                switch (GameWorld.gameWorld.currentGameState)
-                {
-                    case GameState.Loading:
-                        if (Math.Round((decimal)GameWorld.gameWorld.gameCamera.zoom, 1) != 1.0m)
-                        {
-                            GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 1f, 10f * GameWorld.gameWorld.deltaTime);
-                        }
-                        break;
-                    case GameState.MainMenu:
+            //Check and see if the zoom is what should be and lerps to the correct value. The zoom should always be 1 if there is a UI element present (GameState.UI)
+            //
+            switch (GameWorld.gameWorld.currentGameState)
+            {
+                case GameState.Loading:
+                    if (Math.Round((decimal)GameWorld.gameWorld.gameCamera.zoom, 1) != 1.0m)
+                    {
+                        GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 1f, 10f * GameWorld.gameWorld.deltaTime);
+                    }
+                    break;
+
+                case GameState.MainMenu:
+                    //Set our camera at a specific place
                     target = new Vector2(3000, 1700);
 
                     if (Math.Round((decimal)GameWorld.gameWorld.gameCamera.zoom, 2) != 0.22m)
-                        {
+                    {
+                        GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 0.22f, .5f * GameWorld.gameWorld.deltaTime);
+                    }
+                    break;
 
-                            GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 0.22f, .5f * GameWorld.gameWorld.deltaTime);
-
-                        }
-                        break;
-                    case GameState.Game:
+                case GameState.Game:
                     if (GameWorld.gameWorld.startGame)
                     {
+                        //If the game is running, update our camera logic to follow the crabs as well
                         for (int i = 0; i < GameWorld.gameWorld.CrabList.Count; i++)
                         {
                             target = GameWorld.gameWorld.CrabList[targetIndex].Transform.position;
                         }
                     }
                     if (Math.Round((decimal)GameWorld.gameWorld.gameCamera.zoom, 2) != 0.7m)
-                        {
-                            GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 0.7f, .3f * GameWorld.gameWorld.deltaTime);
+                    {
+                        GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 0.7f, .3f * GameWorld.gameWorld.deltaTime);
 
-                        }
-                        break;
+                    }
+                    break;
+
                 case GameState.UI:
                     GameWorld.gameWorld.gameCamera.zoom = MathHelper.Lerp(GameWorld.gameWorld.gameCamera.zoom, 1, 5f * GameWorld.gameWorld.deltaTime);
-
                     break;
-                default:
-                        break;
-                }
-
+            }
+            
             Position = Vector2.Lerp(Position, target, cameraSpeed * GameWorld.gameWorld.deltaTime);
 
 
         }
-        public void SetCameraState()
-        {
 
-
-        }
         private void UpdateViewMatrix()
         {
             //Clamp the value so we can't go below zero
